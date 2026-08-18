@@ -6,6 +6,7 @@ import InputField from "@/components/forms/InputField";
 import FooterLink from "@/components/forms/FooterLink";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { signInWithEmail } from "@/lib/actions/auth.actions";
 
 const SignIn = () => {
 	const router = useRouter();
@@ -24,6 +25,15 @@ const SignIn = () => {
 	const onSubmit = async (data: SignInFormData) => {
 		try {
 			console.log("SignInForm Data:", data);
+			const result = await signInWithEmail(data);
+			if (result.success) {
+				toast.success("Signed in successfully!");
+				router.push("/");
+			} else {
+				toast.error(result.error, {
+					description: "Incorrect email or password.",
+				});
+			}
 		} catch (e) {
 			console.error(e);
 			toast.error("Sign in failed", {
@@ -43,7 +53,13 @@ const SignIn = () => {
 					placeholder="contact@jsmastery.com"
 					register={register}
 					error={errors.email}
-					validation={{ required: "Email is required", pattern: /^\w+@\w+\.\w+$/ }}
+					validation={{
+						required: "Email is required",
+						pattern: {
+							value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+							message: "Please enter a valid email address",
+						},
+					}}
 				/>
 
 				<InputField
@@ -53,7 +69,7 @@ const SignIn = () => {
 					type="password"
 					register={register}
 					error={errors.password}
-					validation={{ required: "Password is required", minLength: 8 }}
+					validation={{ required: "Password is required" }}
 				/>
 
 				<Button type="submit" disabled={isSubmitting} className="yellow-btn w-full mt-5">

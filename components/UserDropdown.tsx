@@ -14,12 +14,14 @@ import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { LogOut } from "lucide-react";
 import NavItems from "./NavItems";
+import { signOut } from "@/lib/actions/auth.actions";
 
 const UserDropdown = () => {
 	const router = useRouter();
 
-	const handleSignOut = () => {
-		router.push("/signin");
+	const handleSignOut = async () => {
+		await signOut();
+		router.push("/sign-in");
 	};
 
 	const user = {

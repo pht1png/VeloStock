@@ -7,6 +7,7 @@ import SelectField from "@/components/forms/SelectField";
 import { INVESTMENT_GOALS, PREFERRED_INDUSTRIES, RISK_TOLERANCE_OPTIONS } from "@/lib/constants";
 import { CountrySelectField } from "@/components/forms/CountrySelectField";
 import FooterLink from "@/components/forms/FooterLink";
+import { signUpWithEmail } from "@/lib/actions/auth.actions";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -33,6 +34,11 @@ const SignUp = () => {
 	const onSubmit = async (data: SignUpFormData) => {
 		try {
 			console.log("Form Data:", data);
+			const result = await signUpWithEmail(data);
+			if (result.success) {
+				toast.success("Account created successfully! Please sign in.");
+				router.push("/");
+			}
 		} catch (e) {
 			console.error(e);
 			toast.error("Sign up failed", {
@@ -58,13 +64,16 @@ const SignUp = () => {
 				<InputField
 					name="email"
 					label="Email"
-					placeholder="contact@jsmastery.com"
+					type="email"
+					placeholder="john.doe@example.com"
 					register={register}
 					error={errors.email}
 					validation={{
-						required: "Email name is required",
-						pattern: /^\w+@\w+\.\w+$/,
-						message: "Email address is required",
+						required: "Email is required",
+						pattern: {
+							value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+							message: "Please enter a valid email address",
+						},
 					}}
 				/>
 
@@ -75,7 +84,17 @@ const SignUp = () => {
 					type="password"
 					register={register}
 					error={errors.password}
-					validation={{ required: "Password is required", minLength: 8 }}
+					validation={{
+						required: "Password is required",
+						minLength: {
+							value: 8,
+							message: "Password must be at least 8 characters long",
+						},
+						maxLength: {
+							value: 128,
+							message: "Password cannot exceed 128 characters",
+						},
+					}}
 				/>
 
 				<CountrySelectField name="country" label="Country" control={control as any} error={errors.country} required />
