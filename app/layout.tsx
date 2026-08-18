@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "VeloStock",
-	description: "Track your stock portfolio with VeloStock in Real-time",
+	title: "Signalist",
+	description: "Track your stock portfolio with Signalist in Real-time",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
